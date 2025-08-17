@@ -1,0 +1,21 @@
+{
+	"name": "ds_datalake_historical",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_datalake_raw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "companies_prices.json",
+				"folderPath": "historical",
+				"fileSystem": "bronze"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

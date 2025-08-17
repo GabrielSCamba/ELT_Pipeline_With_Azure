@@ -1,0 +1,17 @@
+{
+	"name": "ls_keyvault",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"apikey": {
+				"type": "string",
+				"defaultValue": "profile/@{dataset().p_ticker}?apikey=@{dataset().p_apikey}"
+			}
+		},
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kvcambaapikeys.vault.azure.net/"
+		}
+	}
+}

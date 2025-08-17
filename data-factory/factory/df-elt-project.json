@@ -1,0 +1,9 @@
+{
+	"name": "df-elt-project",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "88b89198-82fa-4b20-a4e0-ae346a56a179",
+		"tenantId": "dd31f00a-54bd-4621-88cd-78981e315824"
+	}
+}
