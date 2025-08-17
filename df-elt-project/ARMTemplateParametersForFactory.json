@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df-elt-project"
+		},
+		"ls_databricks_ws_accessToken": {
+			"value": ""
+		},
+		"ls_datalake_gold_accountKey": {
+			"value": ""
+		},
+		"ls_datalake_raw_accountKey": {
+			"value": ""
+		},
+		"ls_db_logs_password": {
+			"value": ""
+		},
+		"ls_synapse_dpool_password": {
+			"value": ""
+		},
+		"ls_databricks_ws_properties_typeProperties_existingClusterId": {
+			"value": "0730-234038-ylufwtl2"
+		},
+		"ls_datalake_gold_properties_typeProperties_url": {
+			"value": "https://datalakeetlproject.dfs.core.windows.net/"
+		},
+		"ls_datalake_raw_properties_typeProperties_url": {
+			"value": "https://datalakeetlproject.dfs.core.windows.net/"
+		},
+		"ls_db_logs_properties_typeProperties_server": {
+			"value": "sv-eltproject.database.windows.net"
+		},
+		"ls_db_logs_properties_typeProperties_database": {
+			"value": "db_logs_pipelines"
+		},
+		"ls_db_logs_properties_typeProperties_userName": {
+			"value": "gscamba"
+		},
+		"ls_fmp_api_properties_typeProperties_url": {
+			"value": "https://financialmodelingprep.com/api/v3/"
+		},
+		"ls_keyvault_properties_typeProperties_baseUrl": {
+			"value": "https://kvcambaapikeys.vault.azure.net/"
+		},
+		"ls_synapse_dpool_properties_typeProperties_server": {
+			"value": "sy-elt-project.sql.azuresynapse.net"
+		},
+		"ls_synapse_dpool_properties_typeProperties_database": {
+			"value": "dpool_eltproject"
+		},
+		"ls_synapse_dpool_properties_typeProperties_userName": {
+			"value": "sqladminuser"
+		}
+	}
+}

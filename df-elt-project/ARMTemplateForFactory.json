@@ -1,0 +1,910 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "df-elt-project"
+		},
+		"ls_databricks_ws_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ls_databricks_ws'"
+		},
+		"ls_datalake_gold_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_datalake_gold'"
+		},
+		"ls_datalake_raw_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_datalake_raw'"
+		},
+		"ls_db_logs_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_db_logs'"
+		},
+		"ls_synapse_dpool_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_synapse_dpool'"
+		},
+		"ls_databricks_ws_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0730-234038-ylufwtl2"
+		},
+		"ls_datalake_gold_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakeetlproject.dfs.core.windows.net/"
+		},
+		"ls_datalake_raw_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalakeetlproject.dfs.core.windows.net/"
+		},
+		"ls_db_logs_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sv-eltproject.database.windows.net"
+		},
+		"ls_db_logs_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "db_logs_pipelines"
+		},
+		"ls_db_logs_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "gscamba"
+		},
+		"ls_fmp_api_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://financialmodelingprep.com/api/v3/"
+		},
+		"ls_keyvault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kvcambaapikeys.vault.azure.net/"
+		},
+		"ls_synapse_dpool_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sy-elt-project.sql.azuresynapse.net"
+		},
+		"ls_synapse_dpool_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dpool_eltproject"
+		},
+		"ls_synapse_dpool_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladminuser"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_stock_analyses')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy - Profile",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get API Key",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_fmp_profile",
+								"type": "DatasetReference",
+								"parameters": {
+									"p_apikey": {
+										"value": "@activity('Get API Key').output.value",
+										"type": "Expression"
+									},
+									"p_tickers": "MSFT,BRK-B,NVDA,AAPL,AMZN,GOOGL,META,AVGO,TSLA,BRK.B,TSM,JPM,WMT,ORCL,LLY,V,JNJ,UNH,CVX,C,MA,KO,GIS,PG,ADBE,IBM,MCD,DIS,NFLX,XOM,HON,CAT,GILD,DHR,UPS,LMT,SBUX,BLK,CVV,MMM,RT,X,NEE,AMGN,T,VZ,QCOM,ADP,SPGI,LOW,TMO,SHOP"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_datalake_profile",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get API Key",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": "https://kvcambaapikeys.vault.azure.net/secrets/fmp-api-key/f9b5dbed3be24ae98a42f74edf3c4247?api-version=7.5",
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Copy - Historical",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy - Profile",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_fmp_historical",
+								"type": "DatasetReference",
+								"parameters": {
+									"p_apikey": {
+										"value": "@activity('Get API Key').output.value",
+										"type": "Expression"
+									},
+									"p_tickers": "MSFT,BRK-B,NVDA,AAPL,AMZN,GOOGL,META,AVGO,TSLA,BRK.B,TSM,JPM,WMT,ORCL,LLY,V,JNJ,UNH,CVX,C,MA,KO,GIS,PG,ADBE,IBM,MCD,DIS,NFLX,XOM,HON,CAT,GILD,DHR,UPS,LMT,SBUX,BLK,CVV,MMM,RT,X,NEE,AMGN,T,VZ,QCOM,ADP,SPGI,LOW,TMO,SHOP"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_datalake_historical",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Bronze_to_Silver",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Populate dim_date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.camba.projects@outlook.com/Bronze_to_Silver"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_ws",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Populate dim_date",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy - Historical",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[PopulateDimDate]",
+							"storedProcedureParameters": {
+								"StartDate": {
+									"value": "2020-01-01",
+									"type": "Datetime"
+								},
+								"EndDate": {
+									"value": {
+										"value": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+										"type": "Expression"
+									},
+									"type": "Datetime"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_synapse_dpool",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Silver_to_Gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Bronze_to_Silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.camba.projects@outlook.com/Silver_To_Gold"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_ws",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Validation_Gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Silver_to_Gold",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.camba.projects@outlook.com/Validation_Gold.py"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_ws",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Copy to Synapse dim_company",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Validation_Gold",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.camba.projects@outlook.com/Copy_To_Synapse_dim_company"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_ws",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Copy to Synapse fact_quote",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "Copy to Synapse dim_company",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/gabriel.camba.projects@outlook.com/Copy_To_Synapse_fact_quote"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_ws",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"StartTime": {
+						"type": "String"
+					},
+					"EndTime": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-08-11T17:46:11Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_fmp_profile')]",
+				"[concat(variables('factoryId'), '/datasets/ds_datalake_profile')]",
+				"[concat(variables('factoryId'), '/datasets/ds_fmp_historical')]",
+				"[concat(variables('factoryId'), '/datasets/ds_datalake_historical')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_databricks_ws')]",
+				"[concat(variables('factoryId'), '/linkedServices/ls_synapse_dpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_datalake_historical')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_datalake_raw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "companies_prices.json",
+						"folderPath": "historical",
+						"fileSystem": "bronze"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_datalake_raw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_datalake_profile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_datalake_raw",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "company_infos.json",
+						"folderPath": "profile",
+						"fileSystem": "bronze"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_datalake_raw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_fmp_historical')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_fmp_api",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_apikey": {
+						"type": "string",
+						"defaultValue": "@activity('Get API Key').output.value"
+					},
+					"p_tickers": {
+						"type": "string",
+						"defaultValue": "MSFT,BRK-B,NVDA,AAPL,AMZN,GOOGL,META,AVGO,TSLA,BRK.B,TSM,JPM,WMT,ORCL,LLY,V,JNJ,UNH,CVX,C,MA,KO,GIS,PG,ADBE,IBM,MCD,DIS,NFLX,XOM,HON,CAT,GILD,DHR,UPS,LMT,SBUX,BLK,CVV,MMM,RT,X,NEE,AMGN,T,VZ,QCOM,ADP,SPGI,LOW,TMO,SHOP"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "historical-price-full/@{dataset().p_tickers}?timeseries=1250&apikey=@{dataset().p_apikey}",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_fmp_api')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_fmp_profile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_fmp_api",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_apikey": {
+						"type": "string",
+						"defaultValue": "@activity('Get API Key').output.value"
+					},
+					"p_tickers": {
+						"type": "String",
+						"defaultValue": "MSFT,BRK-B,NVDA,AAPL,AMZN,GOOGL,META,AVGO,TSLA,BRK.B,TSM,JPM,WMT,ORCL,LLY,V,JNJ,UNH,CVX,C,MA,KO,GIS,PG,ADBE,IBM,MCD,DIS,NFLX,XOM,HON,CAT,GILD,DHR,UPS,LMT,SBUX,BLK,CVV,MMM,RT,X,NEE,AMGN,T,VZ,QCOM,ADP,SPGI,LOW,TMO,SHOP"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "profile/@{dataset().p_tickers}?apikey=@{dataset().p_apikey}",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_fmp_api')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_gold_dim_company')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_datalake_gold",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "dim_company",
+						"fileSystem": "gold"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "ticker",
+						"type": "UTF8"
+					},
+					{
+						"name": "company_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "sector",
+						"type": "UTF8"
+					},
+					{
+						"name": "industry",
+						"type": "UTF8"
+					},
+					{
+						"name": "country",
+						"type": "UTF8"
+					},
+					{
+						"name": "ceo_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "exchange",
+						"type": "UTF8"
+					},
+					{
+						"name": "market_cap",
+						"type": "INT64"
+					},
+					{
+						"name": "website",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_datalake_gold')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_gold_fact_quote')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_datalake_gold",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "fact_quote",
+						"fileSystem": "gold"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "ticker",
+						"type": "UTF8"
+					},
+					{
+						"name": "date",
+						"type": "DATE"
+					},
+					{
+						"name": "open",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "close",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "high",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "low",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "volume",
+						"type": "INT64"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_datalake_gold')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_synapse_dim_company')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_synapse_dpool",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "ticker",
+						"type": "nvarchar"
+					},
+					{
+						"name": "company_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sector",
+						"type": "nvarchar"
+					},
+					{
+						"name": "industry",
+						"type": "nvarchar"
+					},
+					{
+						"name": "country",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ceo_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "exchange",
+						"type": "nvarchar"
+					},
+					{
+						"name": "market_cap",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "website",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "dim_company"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_synapse_dpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_synapse_fact_quote')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_synapse_dpool",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "ticker",
+						"type": "nvarchar"
+					},
+					{
+						"name": "date",
+						"type": "date"
+					},
+					{
+						"name": "open",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "close",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "high",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "low",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "volume",
+						"type": "bigint",
+						"precision": 19
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "fact_quote"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_synapse_dpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_databricks_ws')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-2013593776681557.17.azuredatabricks.net",
+					"accessToken": {
+						"type": "SecureString",
+						"value": "[parameters('ls_databricks_ws_accessToken')]"
+					},
+					"existingClusterId": "[parameters('ls_databricks_ws_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_datalake_gold')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_datalake_gold_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_datalake_gold_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_datalake_raw')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_datalake_raw_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_datalake_raw_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_db_logs')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_db_logs_properties_typeProperties_server')]",
+					"database": "[parameters('ls_db_logs_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_db_logs_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_db_logs_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_fmp_api')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('ls_fmp_api_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_keyvault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"apikey": {
+						"type": "string",
+						"defaultValue": "profile/@{dataset().p_ticker}?apikey=@{dataset().p_apikey}"
+					}
+				},
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('ls_keyvault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_synapse_dpool')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"server": "[parameters('ls_synapse_dpool_properties_typeProperties_server')]",
+					"database": "[parameters('ls_synapse_dpool_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_synapse_dpool_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_synapse_dpool_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
