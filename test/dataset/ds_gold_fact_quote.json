@@ -1,0 +1,50 @@
+{
+	"name": "ds_gold_fact_quote",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_datalake_gold",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "fact_quote",
+				"fileSystem": "gold"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ticker",
+				"type": "UTF8"
+			},
+			{
+				"name": "date",
+				"type": "DATE"
+			},
+			{
+				"name": "open",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "close",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "high",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "low",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "volume",
+				"type": "INT64"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

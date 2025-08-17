@@ -1,0 +1,58 @@
+{
+	"name": "ds_gold_dim_company",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_datalake_gold",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "dim_company",
+				"fileSystem": "gold"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ticker",
+				"type": "UTF8"
+			},
+			{
+				"name": "company_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "sector",
+				"type": "UTF8"
+			},
+			{
+				"name": "industry",
+				"type": "UTF8"
+			},
+			{
+				"name": "country",
+				"type": "UTF8"
+			},
+			{
+				"name": "ceo_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "exchange",
+				"type": "UTF8"
+			},
+			{
+				"name": "market_cap",
+				"type": "INT64"
+			},
+			{
+				"name": "website",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
