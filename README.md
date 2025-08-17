@@ -22,9 +22,9 @@ This repository contains the artifacts of my **Data Engineering project**, where
 
 ## 📂 Repository Structure
 
-
-├─ data-factory
-│  ├─ dataset
+```
+├─ 📂 data-factory
+│  ├─ 📂 dataset
 │  │  ├─ ds_datalake_historical.json
 │  │  ├─ ds_datalake_profile.json
 │  │  ├─ ds_fmp_historical.json
@@ -33,23 +33,23 @@ This repository contains the artifacts of my **Data Engineering project**, where
 │  │  ├─ ds_gold_fact_quote.json
 │  │  ├─ ds_synapse_dim_company.json
 │  │  └─ ds_synapse_fact_quote.json
-│  ├─ factory
+│  ├─ 📂 factory
 │  │  └─ df-elt-project.json
-│  ├─ linkedServices
+│  ├─ 📂 linkedServices
 │  │  ├─ ls_databricks_ws.json
 │  │  ├─ ls_datalake_gold.json
 │  │  ├─ ls_datalake_raw.json
 │  │  ├─ ls_fmp_api.json
 │  │  ├─ ls_keyvault.json
 │  │  └─ ls_synapse_dpool.json
-│  ├─ pipeline
+│  ├─ 📂 pipeline
 │  │  └─ publish_config.json 
-├─ databricks
+├─ 📂 databricks
 │  │  ├─ exploration.ipynb
 │  │  └─ analysis.ipynb
-├─ docs
+├─ 📂 docs
 └─ readme.md
-
+```
 ---
 
 ## 📝 Project Summary
