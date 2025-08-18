@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Script_populate_dim_date",
+	"properties": {
+		"content": {
+			"query": "CREATE PROCEDURE dbo.PopulateDimDate\n    @StartDate DATE,\n    @EndDate DATE\nAS\nBEGIN\n    SET NOCOUNT ON;\n\n    DELETE FROM dbo.dim_date\n    WHERE [date] BETWEEN @StartDate AND @EndDate;\n\n    WITH N AS (\n        SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS num\n        FROM sys.objects a\n        CROSS JOIN sys.objects b\n    )\n    INSERT INTO dbo.dim_date (date, year, month, day, week_day)\n    SELECT \n        DATEADD(DAY, num, @StartDate) AS [date],\n        YEAR(DATEADD(DAY, num, @StartDate)) AS [year],\n        MONTH(DATEADD(DAY, num, @StartDate)) AS [month],\n        DAY(DATEADD(DAY, num, @StartDate)) AS [day],\n        DATENAME(WEEKDAY, DATEADD(DAY, num, @StartDate)) AS [week_day]\n    FROM N\n    WHERE DATEADD(DAY, num, @StartDate) <= @EndDate;\nEND;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dpool_eltproject",
+				"poolName": "dpool_eltproject"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

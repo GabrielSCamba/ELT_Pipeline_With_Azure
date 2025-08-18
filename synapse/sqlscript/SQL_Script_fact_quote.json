@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Script_fact_quote",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.fact_quote\n(\n    id BIGINT NOT NULL,\n    ticker NVARCHAR(50) NOT NULL,\n    [date] DATE NOT NULL,\n    [open] FLOAT NULL,\n    [close] FLOAT NULL,\n    high FLOAT NULL,\n    low FLOAT NULL,\n    volume BIGINT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH(ticker),\n    CLUSTERED COLUMNSTORE INDEX\n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dpool_eltproject",
+				"poolName": "dpool_eltproject"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Script_dim_date",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.dim_date\n(\n    date DATE NOT NULL,\n    year INT NOT NULL,\n    month INT NOT NULL,\n    day INT NOT NULL,\n    week_day NVARCHAR(20) NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,        \n    CLUSTERED COLUMNSTORE INDEX        \n);\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dpool_eltproject",
+				"poolName": "dpool_eltproject"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
