@@ -94,7 +94,7 @@ This Resource Group served as a container for all services used in the project.B
   <em>Figure 3: Resource Group</em>
 </p>
 
-#### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="30"/>
+#### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/>
 Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion architecture**:
 
 <p align="center">
@@ -130,7 +130,7 @@ Additionally, a **Staging Layer** was created to move data from the Gold layer i
   <em>Figure 8: Staging Synapse</em>
 </p>
 
-#### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="30"/>
+#### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/>
 - A **Dedicated SQL Pool** was created.  
 - Tables and a **stored procedure** were implemented to populate the `dim_date` table.  
 
@@ -139,7 +139,7 @@ Additionally, a **Staging Layer** was created to move data from the Gold layer i
   <em>Figure 9: Synapse tables</em>
 </p>
 
-#### Key Vault <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="30"/> 
+#### Key Vault <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="20"/> 
 For data security, **Azure Key Vault** was used to securely store sensitive information, such as the API Key and Synapse credentials.  
 
 <p align="center">
@@ -147,7 +147,7 @@ For data security, **Azure Key Vault** was used to securely store sensitive info
   <em>Figure 10: Key Vault secrets</em>
 </p>
 
-#### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="30"/>
+#### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/>
 - A low-cost cluster was created (since this is a personal project).  
 
 <p align="center">
@@ -167,7 +167,7 @@ Nootebooks:
 
 ---
 
-### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="30"/>
+### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/>
 Azure Data Factory was used to orchestrate the pipeline, ensuring automation and monitoring.
 
 Steps:
