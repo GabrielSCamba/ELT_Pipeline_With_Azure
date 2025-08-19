@@ -113,6 +113,7 @@ Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion arch
 *Figure 6: Silver folders*
 
 - **Gold**: enriched data with business metrics. 
+
 ![Gold folders](docs/gold-folders.png)
 
 *Figure 7: Gold folders*
