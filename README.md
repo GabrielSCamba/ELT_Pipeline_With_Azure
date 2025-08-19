@@ -77,7 +77,10 @@ This project has two main objectives:
 The first step was to choose an API to consume data from.  
 I selected the **Financial Modeling Prep (FMP)** API because its **Basic Plan** is free and meets the project needs (historical stock price data). 
 
-![API plans](docs/api-plans.png)
+![API Plans][api-plans] 
+
+[api-plans]: docs/api-plans.png
+
 
 After reading the documentation and understanding its endpoints, I registered on the website to obtain an **API Key**.  
 
