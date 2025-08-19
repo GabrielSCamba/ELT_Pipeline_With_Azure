@@ -11,7 +11,7 @@
 
 ## Introduction
 This Data Engineering project consists of developing a data pipeline that consumes raw data from an API, applies transformations and standardization, and makes the data available for analytical consumption.  
-It leverages Microsoft Azure services and follows best development practices.
+It uses Microsoft Azure services and follows best development practices.
 
 ---
 
@@ -24,9 +24,8 @@ This project has two main objectives:
 ---
 
 ## Project Architecture Overview
-![Project Architecture][![Arquitetura do Projeto](docs/project_architecture.png)]
 
----
+![API Plans](docs/project_architecture.png)
 
 ---
 
@@ -63,11 +62,11 @@ This project has two main objectives:
 ---
 
 ## Tools Used
-- **Azure Data Factory** → Data orchestration  
-- **Azure Databricks (PySpark)** → Data transformations  
-- **Azure Synapse** → Analytic Warehouse  
-- **Azure Data Lake Storage Gen2** → Storage (Bronze, Silver, Gold layers)  
-- **Azure Key Vault** → Secrets management  
+- <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/> **Azure Data Factory** → Data orchestration  
+- <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/> **Azure Databricks (PySpark)** → Data transformations  
+- <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/> **Azure Synapse** → Analytic Warehouse  
+- <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/> **Azure Data Lake Storage Gen2** → Storage (Bronze, Silver, Gold layers)  
+- <img src="docs/logos/key_vault-logo.png" alt="Key Vault" width="20"/> **Azure Key Vault** → Secrets management  
 
 ---
 
@@ -77,9 +76,9 @@ This project has two main objectives:
 The first step was to choose an API to consume data from.  
 I selected the **Financial Modeling Prep (FMP)** API because its **Basic Plan** is free and meets the project needs (historical stock price data). 
 
-![API Plans][api-plans] 
+![API Plans](docs/api-plans.png)
 
-[api-plans]: docs/api-plans.png
+*Figure 2: API Plans*
 
 
 After reading the documentation and understanding its endpoints, I registered on the website to obtain an **API Key**.  
@@ -92,52 +91,88 @@ This Resource Group served as a container for all services used in the project.B
 
 ![Resource Group](docs/resource.png)
 
+*Figure 3: Resource Group*
 
-#### Storage Account (Data Lake)
+#### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/>
 Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion architecture**:
+
 ![Storage layers](docs/layers-overview.png)
+
+*Figure 4: Storage layers*
+
 - **Bronze**: raw data directly from the source. 
- ![Bronze folders](docs/bronze-folders.png)
+
+![Bronze folders](docs/bronze-folders.png)
+
+*Figure 5: Bronze folders*
+ 
 - **Silver**: cleaned and standardized data (duplicates removed, column names standardized, column types validated).  
+
 ![Silver folders](docs/silver-folders.png)
+
+*Figure 6: Silver folders*
+
 - **Gold**: enriched data with business metrics. 
 ![Gold folders](docs/gold-folders.png)
 
-Additionally, a **Staging Layer** was created to move data from the Gold layer into **Azure Synapse** using **Databricks**.
-![Project Architecture](docs/create_table-dim_company.png)
+*Figure 7: Gold folders*
 
-#### Synapse
+Additionally, a **Staging Layer** was created to move data from the Gold layer into **Azure Synapse** using **Databricks**.
+
+![Staging Synapse](docs/staging-synapse.png)
+
+*Figure 8: Staging Synapse*
+
+#### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/>
 - A **Dedicated SQL Pool** was created.  
 - Tables and a **stored procedure** were implemented to populate the `dim_date` table.  
+
 ![Synapse tables](docs/synapse-tables.png)
 
-#### Key Vault
+*Figure 9: Synapse tables*
+
+#### Key Vault <img src="docs/logos/key_vault-logo.png" alt="Key Vault" width="20"/> 
 For data security, **Azure Key Vault** was used to securely store sensitive information, such as the API Key and Synapse credentials.  
+
 ![Key Vault secrets](docs/keys.png)
 
-#### Databricks
+*Figure 10: Key Vault secrets*
+
+#### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/>
 - A low-cost cluster was created (since this is a personal project).  
+
 ![Databricks cluster](docs/details-cluster.png)
+
+*Figure 10: Databricks cluster*
+
 - Databricks was used to process and move data across the Bronze → Silver → Gold → Synapse layers.  
 - To connect Databricks with the Data Lake, credentials were stored securely using **Databricks Secret Scope**, following [this documentation](https://learn.microsoft.com/en-us/azure/databricks/security/secrets/example-secret-workflow).  
 
-Developed notebooks:
-- `Bronze_To_Silver.py`: Data exploration, standardization, and cleaning.  
-- `Silver_To_Gold.py`: Data enrichment.  
-- `Validation_Gold.py`: Validation to ensure Gold data consistency.  
-- `Copy_To_Synapse_dim_company.py`: Moves `dim_company` from Gold to Synapse.  
-- `Copy_To_Synapse_fact_quote.py`: Moves `fact_quote` from Gold to Synapse.  
+Nootebooks:
+- [Bronze_To_Silver.ipynb](databricks/Bronze_To_Silver.ipynb): Data exploration, standardization, and cleaning.  
+- [Silver_To_Gold.ipynb](databricks/Silver_To_Gold.ipynb): Data enrichment.  
+- [Validation_Gold.ipynb](databricks/Validation_Gold.ipynb): Validation to ensure Gold data consistency.  
+- [Copy_To_Synapse_dim_company.ipynb](databricks/Copy_To_Synapse_dim_company.ipynb): Moves `dim_company` from Gold to Synapse.  
+- [Copy_To_Synapse_fact_quote.ipynb](databricks/Copy_To_Synapse_fact_quote.ipynb): Moves `fact_quote` from Gold to Synapse.  
 
 ---
 
-### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.jpeg" alt="Data Factory logo" width="20"/>
+### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/>
 Azure Data Factory was used to orchestrate the pipeline, ensuring automation and monitoring.
 
 Steps:
 1. **Linked Services** → Connections to external data sources and compute services. They define *how* Data Factory connects to the resources.  
+
 ![Data Factory - Linked Services](docs/df-linked_services.png)
+
+*Figure 11: Data Factory - Linked Services*
+
 2. **Datasets** → Representations of data structures within the linked data stores. They point to specific files, tables, or folders and are used as inputs and outputs in Data Factory activities.  
+
 ![Data Factory - Datasets](docs/df-datasets.png)
+
+*Figure 12: Data Factory - Datasets*
+
 3. **Pipeline Flow** → Orchestrated sequence of activities:  
    - Retrieve API Key from Key Vault  
    - Ingest API data into the Bronze layer  
@@ -149,6 +184,8 @@ Steps:
 
 ![Data Factory - Pipeline](docs/pipeline.png)
 
+*Figure 13: Data Factory - Pipeline*
+
 ---
 ## Results
 The project successfully delivers **clean and analysis-ready data** stored in **Azure Synapse**.  
@@ -157,8 +194,16 @@ This allows quick, reliable, and business-oriented analytics.
 The images below demonstrate the results obtained, with the tables properly populated in Synapse:
 
 ![Table dim_date](docs/table-dim_date.png) 
+
+*Figure 14: Table dim_date*
+
 ![Table dim_company](docs/table-dim_company.png)
+
+*Figure 15: Table dim_company*
+
 ![Table fact_quote](docs/table-fact_quote.png)
+
+*Figure 16: Table fact_quote*
 
 ---
 
@@ -186,7 +231,6 @@ To improve this project, possible extensions include:
 - [Azure Data Factory - Use Key Vault](https://learn.microsoft.com/en-us/azure/data-factory/how-to-use-azure-key-vault-secrets-pipeline-activities)  
 - [Azure Data Lake Storage Documentation](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction)  
 - [Azure Synapse Documentation](https://learn.microsoft.com/en-us/azure/synapse-analytics/)  
-
 - [Azure Key Vault Documentation](https://learn.microsoft.com/en-us/azure/key-vault/)  
 - [Databricks Secrets Documentation](https://docs.databricks.com/aws/en/security/secrets/example-secret-workflow)  
 - [DP-700T00 Microsoft Training](https://learn.microsoft.com/en-us/training/courses/dp-700t00)  
