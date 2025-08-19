@@ -77,7 +77,7 @@ This project has two main objectives:
 The first step was to choose an API to consume data from.  
 I selected the **Financial Modeling Prep (FMP)** API because its **Basic Plan** is free and meets the project needs (historical stock price data). 
 
-![API Plans][![API plans](docs/api-plans.png)]
+![API plans](docs/api-plans.png)
 
 After reading the documentation and understanding its endpoints, I registered on the website to obtain an **API Key**.  
 
@@ -87,34 +87,34 @@ After reading the documentation and understanding its endpoints, I registered on
 Inside Microsoft Azure, the necessary resources were created within a Resource Group.  
 This Resource Group served as a container for all services used in the project.By grouping the resources together, it was easier to manage access, monitor costs, and keep the environment organized.
 
-![Resource Group][![API Plans](docs/resource.png)]
+![Resource Group](docs/resource.png)
 
 
 #### Storage Account (Data Lake)
 Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion architecture**:
-![Storage layers][![API Plans](docs/layers-overview.png)]
+![Storage layers](docs/layers-overview.png)
 - **Bronze**: raw data directly from the source. 
- ![Bronze folders][![API Plans](docs/bronze-folders.png)]
+ ![Bronze folders](docs/bronze-folders.png)
 - **Silver**: cleaned and standardized data (duplicates removed, column names standardized, column types validated).  
-![Silver folders][![API Plans](docs/silver-folders.png)]
+![Silver folders](docs/silver-folders.png)
 - **Gold**: enriched data with business metrics. 
-![Gold folders][![API Plans](docs/gold-folders.png)] 
+![Gold folders](docs/gold-folders.png)
 
 Additionally, a **Staging Layer** was created to move data from the Gold layer into **Azure Synapse** using **Databricks**.
-![Project Architecture][![API Plans](docs/create_table-dim_company.png)] 
+![Project Architecture](docs/create_table-dim_company.png)
 
 #### Synapse
 - A **Dedicated SQL Pool** was created.  
 - Tables and a **stored procedure** were implemented to populate the `dim_date` table.  
-![Synapse tables][![API Plans](docs/synapse-tables.png)] 
+![Synapse tables](docs/synapse-tables.png)
 
 #### Key Vault
 For data security, **Azure Key Vault** was used to securely store sensitive information, such as the API Key and Synapse credentials.  
-![Key Vault secrets][![API Plans](docs/keys.png)] 
+![Key Vault secrets](docs/keys.png)
 
 #### Databricks
 - A low-cost cluster was created (since this is a personal project).  
-![Databricks cluster][![API Plans](docs/details-cluster.png)] 
+![Databricks cluster](docs/details-cluster.png)
 - Databricks was used to process and move data across the Bronze → Silver → Gold → Synapse layers.  
 - To connect Databricks with the Data Lake, credentials were stored securely using **Databricks Secret Scope**, following [this documentation](https://learn.microsoft.com/en-us/azure/databricks/security/secrets/example-secret-workflow).  
 
@@ -127,14 +127,14 @@ Developed notebooks:
 
 ---
 
-### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/>
+### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.jpeg" alt="Data Factory logo" width="20"/>
 Azure Data Factory was used to orchestrate the pipeline, ensuring automation and monitoring.
 
 Steps:
 1. **Linked Services** → Connections to external data sources and compute services. They define *how* Data Factory connects to the resources.  
-![Data Factory - Linked Services][![API Plans](docs/df-linked_services.png)] 
+![Data Factory - Linked Services](docs/df-linked_services.png)
 2. **Datasets** → Representations of data structures within the linked data stores. They point to specific files, tables, or folders and are used as inputs and outputs in Data Factory activities.  
-![Data Factory - Datasets][![API Plans](docs/df-datasets.png)] 
+![Data Factory - Datasets](docs/df-datasets.png)
 3. **Pipeline Flow** → Orchestrated sequence of activities:  
    - Retrieve API Key from Key Vault  
    - Ingest API data into the Bronze layer  
@@ -144,7 +144,7 @@ Steps:
    - Execute stored procedure for `dim_date`  
    - Ingest Gold data into Synapse with Databricks  
 
-![Data Factory - Pipeline][![API Plans](docs/pipeline.png)] 
+![Data Factory - Pipeline](docs/pipeline.png)
 
 ---
 ## Results
@@ -153,9 +153,9 @@ This allows quick, reliable, and business-oriented analytics.
 
 The images below demonstrate the results obtained, with the tables properly populated in Synapse:
 
-![Table dim_date][![API Plans](docs/table-dim_date.png)] 
-![Table dim_company][![API Plans](docs/table-dim_company.png)] 
-![Table fact_quote][![API Plans](docs/table-fact_quote.png)] 
+![Table dim_date](docs/table-dim_date.png) 
+![Table dim_company](docs/table-dim_company.png)
+![Table fact_quote](docs/table-fact_quote.png)
 
 ---
 
