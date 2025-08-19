@@ -62,11 +62,11 @@ This project has two main objectives:
 ---
 
 ## Tools Used
-- <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/> **Azure Data Factory** → Data orchestration  
-- <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/> **Azure Databricks (PySpark)** → Data transformations  
-- <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/> **Azure Synapse** → Analytic Warehouse  
-- <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/> **Azure Data Lake Storage Gen2** → Storage (Bronze, Silver, Gold layers)  
-- <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="20"/> **Azure Key Vault** → Secrets management  
+- <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="30"/> **Azure Data Factory** → Data orchestration  
+- <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="30"/> **Azure Databricks (PySpark)** → Data transformations  
+- <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="30"/> **Azure Synapse** → Analytic Warehouse  
+- <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="30"/> **Azure Data Lake Storage Gen2** → Storage (Bronze, Silver, Gold layers)  
+- <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="30"/> **Azure Key Vault** → Secrets management  
 
 ---
 
@@ -90,15 +90,15 @@ Inside Microsoft Azure, the necessary resources were created within a Resource G
 This Resource Group served as a container for all services used in the project.By grouping the resources together, it was easier to manage access, monitor costs, and keep the environment organized.
 
 <p align="center">
-  <img src="docs/resource.png" alt="Resource Group" width="600"/><br>
+  <img src="docs/resource-group.png" alt="Resource Group" width="600"/><br>
   <em>Figure 3: Resource Group</em>
 </p>
 
-#### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/>
+#### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="30"/>
 Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion architecture**:
 
 <p align="center">
-  <img src="docs/layers-overview.png" alt="Storage layers" width="600"/><br>
+  <img src="docs/layers-overview.png" alt="Storage layers" width="400"/><br>
   <em>Figure 4: Storage layers</em>
 </p>
 
@@ -130,16 +130,16 @@ Additionally, a **Staging Layer** was created to move data from the Gold layer i
   <em>Figure 8: Staging Synapse</em>
 </p>
 
-#### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/>
+#### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="30"/>
 - A **Dedicated SQL Pool** was created.  
 - Tables and a **stored procedure** were implemented to populate the `dim_date` table.  
 
 <p align="center">
-  <img src="docs/synapse-tables.png" alt="Synapse tables" width="600"/><br>
+  <img src="docs/synapse-tables.png" alt="Synapse tables" width="400"/><br>
   <em>Figure 9: Synapse tables</em>
 </p>
 
-#### Key Vault <img src="docs/logos/key_vault-logo.png" alt="Key Vault" width="20"/> 
+#### Key Vault <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="30"/> 
 For data security, **Azure Key Vault** was used to securely store sensitive information, such as the API Key and Synapse credentials.  
 
 <p align="center">
@@ -147,7 +147,7 @@ For data security, **Azure Key Vault** was used to securely store sensitive info
   <em>Figure 10: Key Vault secrets</em>
 </p>
 
-#### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/>
+#### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="30"/>
 - A low-cost cluster was created (since this is a personal project).  
 
 <p align="center">
@@ -167,7 +167,7 @@ Nootebooks:
 
 ---
 
-### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="20"/>
+### 3. Data Factory (Orchestration) <img src="docs/logos/adf-logo.png" alt="Data Factory logo" width="30"/>
 Azure Data Factory was used to orchestrate the pipeline, ensuring automation and monitoring.
 
 Steps:
@@ -181,7 +181,7 @@ Steps:
 2. **Datasets** → Representations of data structures within the linked data stores. They point to specific files, tables, or folders and are used as inputs and outputs in Data Factory activities.  
 
 <p align="center">
-  <img src="docs/df-datasets.png" alt="Data Factory - Datasets" width="600"/><br>
+  <img src="docs/df-datasets.png" alt="Data Factory - Datasets" width="400"/><br>
   <em>Figure 13: Data Factory - Datasets</em>
 </p>
 
