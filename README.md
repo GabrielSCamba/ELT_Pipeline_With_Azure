@@ -66,7 +66,7 @@ This project has two main objectives:
 - <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/> **Azure Databricks (PySpark)** → Data transformations  
 - <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/> **Azure Synapse** → Analytic Warehouse  
 - <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/> **Azure Data Lake Storage Gen2** → Storage (Bronze, Silver, Gold layers)  
-- <img src="docs/logos/key_vault-logo.png" alt="Key Vault" width="20"/> **Azure Key Vault** → Secrets management  
+- <img src="docs/logos/key_vault-logo.svg" alt="Key Vault" width="20"/> **Azure Key Vault** → Secrets management  
 
 ---
 
@@ -76,10 +76,10 @@ This project has two main objectives:
 The first step was to choose an API to consume data from.  
 I selected the **Financial Modeling Prep (FMP)** API because its **Basic Plan** is free and meets the project needs (historical stock price data). 
 
-![API Plans](docs/api-plans.png)
-
-*Figure 2: API Plans*
-
+<p align="center">
+  <img src="docs/api-plans.png" alt="API Plans" width="600"/><br>
+  <em>Figure 2: API Plans</em>
+</p>
 
 After reading the documentation and understanding its endpoints, I registered on the website to obtain an **API Key**.  
 
@@ -89,62 +89,71 @@ After reading the documentation and understanding its endpoints, I registered on
 Inside Microsoft Azure, the necessary resources were created within a Resource Group.  
 This Resource Group served as a container for all services used in the project.By grouping the resources together, it was easier to manage access, monitor costs, and keep the environment organized.
 
-![Resource Group](docs/resource.png)
-
-*Figure 3: Resource Group*
+<p align="center">
+  <img src="docs/resource.png" alt="Resource Group" width="600"/><br>
+  <em>Figure 3: Resource Group</em>
+</p>
 
 #### Storage Account (Data Lake) <img src="docs/logos/data_lake-logo.png" alt="Data Lake Storage Gen2 logo" width="20"/>
 Data is stored in an **Azure Data Lake Storage Gen2** using the **medallion architecture**:
 
-![Storage layers](docs/layers-overview.png)
-
-*Figure 4: Storage layers*
+<p align="center">
+  <img src="docs/layers-overview.png" alt="Storage layers" width="600"/><br>
+  <em>Figure 4: Storage layers</em>
+</p>
 
 - **Bronze**: raw data directly from the source. 
 
-![Bronze folders](docs/bronze-folders.png)
-
-*Figure 5: Bronze folders*
+<p align="center">
+  <img src="docs/bronze-folders.png" alt="Bronze folders" width="600"/><br>
+  <em>Figure 5: Bronze folders</em>
+</p>
  
 - **Silver**: cleaned and standardized data (duplicates removed, column names standardized, column types validated).  
 
-![Silver folders](docs/silver-folders.png)
-
-*Figure 6: Silver folders*
+<p align="center">
+  <img src="docs/silver-folders.png" alt="Silver folders" width="600"/><br>
+  <em>Figure 6: Silver folders</em>
+</p>
 
 - **Gold**: enriched data with business metrics. 
 
-![Gold folders](docs/gold-folders.png)
-
-*Figure 7: Gold folders*
+<p align="center">
+  <img src="docs/gold-folders.png" alt="Gold folders" width="600"/><br>
+  <em>Figure 7: Gold folders</em>
+</p>
 
 Additionally, a **Staging Layer** was created to move data from the Gold layer into **Azure Synapse** using **Databricks**.
 
-![Staging Synapse](docs/staging-synapse.png)
-
-*Figure 8: Staging Synapse*
+<p align="center">
+  <img src="docs/staging-synapse.png" alt="Staging Synapse" width="600"/><br>
+  <em>Figure 8: Staging Synapse</em>
+</p>
 
 #### Synapse <img src="docs/logos/synapse-logo.svg" alt="Synapse logo" width="20"/>
 - A **Dedicated SQL Pool** was created.  
 - Tables and a **stored procedure** were implemented to populate the `dim_date` table.  
 
-![Synapse tables](docs/synapse-tables.png)
-
-*Figure 9: Synapse tables*
+<p align="center">
+  <img src="docs/synapse-tables.png" alt="Synapse tables" width="600"/><br>
+  <em>Figure 9: Synapse tables</em>
+</p>
 
 #### Key Vault <img src="docs/logos/key_vault-logo.png" alt="Key Vault" width="20"/> 
 For data security, **Azure Key Vault** was used to securely store sensitive information, such as the API Key and Synapse credentials.  
 
-![Key Vault secrets](docs/keys.png)
-
-*Figure 10: Key Vault secrets*
+<p align="center">
+  <img src="docs/keys.png" alt="Key Vault secrets" width="600"/><br>
+  <em>Figure 10: Key Vault secrets</em>
+</p>
 
 #### Databricks <img src="docs/logos/databricks-logo.png" alt="Databricks logo" width="20"/>
 - A low-cost cluster was created (since this is a personal project).  
 
-![Databricks cluster](docs/details-cluster.png)
-
-*Figure 10: Databricks cluster*
+<p align="center">
+  <img src="docs/details-cluster.png" alt="Databricks cluster" width="600"/><br>
+  <em>Figure 11: Databricks cluster</em>
+</p>
 
 - Databricks was used to process and move data across the Bronze → Silver → Gold → Synapse layers.  
 - To connect Databricks with the Data Lake, credentials were stored securely using **Databricks Secret Scope**, following [this documentation](https://learn.microsoft.com/en-us/azure/databricks/security/secrets/example-secret-workflow).  
@@ -164,15 +173,17 @@ Azure Data Factory was used to orchestrate the pipeline, ensuring automation and
 Steps:
 1. **Linked Services** → Connections to external data sources and compute services. They define *how* Data Factory connects to the resources.  
 
-![Data Factory - Linked Services](docs/df-linked_services.png)
-
-*Figure 11: Data Factory - Linked Services*
+<p align="center">
+  <img src="docs/df-linked_services.png" alt="Data Factory - Linked Services" width="600"/><br>
+  <em>Figure 12: Data Factory - Linked Services</em>
+</p>
 
 2. **Datasets** → Representations of data structures within the linked data stores. They point to specific files, tables, or folders and are used as inputs and outputs in Data Factory activities.  
 
-![Data Factory - Datasets](docs/df-datasets.png)
-
-*Figure 12: Data Factory - Datasets*
+<p align="center">
+  <img src="docs/df-datasets.png" alt="Data Factory - Datasets" width="600"/><br>
+  <em>Figure 13: Data Factory - Datasets</em>
+</p>
 
 3. **Pipeline Flow** → Orchestrated sequence of activities:  
    - Retrieve API Key from Key Vault  
@@ -183,9 +194,10 @@ Steps:
    - Execute stored procedure for `dim_date`  
    - Ingest Gold data into Synapse with Databricks  
 
-![Data Factory - Pipeline](docs/pipeline.png)
-
-*Figure 13: Data Factory - Pipeline*
+<p align="center">
+  <img src="docs/pipeline.png" alt="Data Factory - Pipeline" width="600"/><br>
+  <em>Figure 14: Data Factory - Pipeline</em>
+</p>
 
 ---
 ## Results
@@ -194,17 +206,20 @@ This allows quick, reliable, and business-oriented analytics.
 
 The images below demonstrate the results obtained, with the tables properly populated in Synapse:
 
-![Table dim_date](docs/table-dim_date.png) 
+<p align="center">
+  <img src="docs/table-dim_date.png" alt="Table dim_date" width="600"/><br>
+  <em>Figure 15: Table dim_date</em>
+</p>
 
-*Figure 14: Table dim_date*
+<p align="center">
+  <img src="docs/table-dim_company.png" alt="Table dim_company" width="600"/><br>
+  <em>Figure 16: Table dim_company</em>
+</p>
 
-![Table dim_company](docs/table-dim_company.png)
-
-*Figure 15: Table dim_company*
-
-![Table fact_quote](docs/table-fact_quote.png)
-
-*Figure 16: Table fact_quote*
+<p align="center">
+  <img src="docs/table-fact_quote.png" alt="Table fact_quote" width="600"/><br>
+  <em>Figure 17: Table fact_quote</em>
+</p>
 
 ---
 
