@@ -163,7 +163,7 @@ For data security, **Azure Key Vault** was used to securely store sensitive info
 - To connect Databricks with the Data Lake, credentials were stored securely using **Databricks Secret Scope**, following [this documentation](https://learn.microsoft.com/en-us/azure/databricks/security/secrets/example-secret-workflow).  
 
 Nootebooks:
-- [Bronze_to_Silver.ipynb](databricks/Bronze_To_Silver.ipynb): Data exploration, standardization, and cleaning.  
+- [Bronze_to_Silver.ipynb](databricks/Bronze_to_Silver.ipynb): Data exploration, standardization, and cleaning.  
 - [Silver_To_Gold.ipynb](databricks/Silver_To_Gold.ipynb): Data enrichment.  
 - [Validation_Gold.ipynb](databricks/Validation_Gold.ipynb): Validation to ensure Gold data consistency.  
 - [Copy_To_Synapse_dim_company.ipynb](databricks/Copy_To_Synapse_dim_company.ipynb): Moves `dim_company` from Gold to Synapse.  
