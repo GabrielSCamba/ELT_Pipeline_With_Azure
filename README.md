@@ -58,8 +58,11 @@ This project has two main objectives:
 │  ├─ 📂 pipeline
 │  │  └─ publish_config.json 
 ├─ 📂 databricks
-│  │  ├─ exploration.ipynb
-│  │  └─ analysis.ipynb
+│  │  ├─ Bronze_to_Silver.ipynb
+│  │  ├─ Silver_To_Gold.ipynb
+│  │  ├─ Validation_Gold.ipynb
+│  │  ├─ Copy_To_Synapse_dim_company.ipynb
+│  │  └─ Copy_To_Synapse_fact_quote.ipynb
 ├─ 📂 docs
 └─ README.md
 ```
@@ -91,7 +94,7 @@ After reading the documentation and understanding its endpoints, I registered on
 
 ### 2. Create Azure Resources
 Inside Microsoft Azure, the necessary resources were created within a Resource Group.  
-This Resource Group served as a container for all services used in the project.By grouping the resources together, it was easier to manage access, monitor costs, and keep the environment organized.
+This Resource Group served as a container for all services used in the project. By grouping the resources together, it was easier to manage access, monitor costs, and keep the environment organized.
 
 <p align="center">
   <img src="docs/resource-group.png" alt="Resource Group" width="600"/><br>
