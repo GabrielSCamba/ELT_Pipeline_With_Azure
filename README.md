@@ -61,7 +61,7 @@ This project has two main objectives:
 │  │  ├─ exploration.ipynb
 │  │  └─ analysis.ipynb
 ├─ 📂 docs
-└─ readme.md
+└─ README.md
 ```
 ---
 
@@ -81,8 +81,8 @@ The first step was to choose an API to consume data from.
 I selected the **Financial Modeling Prep (FMP)** API because its **Basic Plan** is free and meets the project needs (historical stock price data). 
 
 <p align="center">
-  <img src="docs/api-plans.png" alt="API Plans" width="600"/><br>
-  <em>Figure 2: API Plans</em>
+  <img src="docs/api-plans.png" alt="API Basic plan" width="600"/><br>
+  <em>Figure 2: API Basic plan</em>
 </p>
 
 After reading the documentation and understanding its endpoints, I registered on the website to obtain an **API Key**.  
@@ -163,7 +163,7 @@ For data security, **Azure Key Vault** was used to securely store sensitive info
 - To connect Databricks with the Data Lake, credentials were stored securely using **Databricks Secret Scope**, following [this documentation](https://learn.microsoft.com/en-us/azure/databricks/security/secrets/example-secret-workflow).  
 
 Nootebooks:
-- [Bronze_To_Silver.ipynb](databricks/Bronze_To_Silver.ipynb): Data exploration, standardization, and cleaning.  
+- [Bronze_to_Silver.ipynb](databricks/Bronze_To_Silver.ipynb): Data exploration, standardization, and cleaning.  
 - [Silver_To_Gold.ipynb](databricks/Silver_To_Gold.ipynb): Data enrichment.  
 - [Validation_Gold.ipynb](databricks/Validation_Gold.ipynb): Validation to ensure Gold data consistency.  
 - [Copy_To_Synapse_dim_company.ipynb](databricks/Copy_To_Synapse_dim_company.ipynb): Moves `dim_company` from Gold to Synapse.  
