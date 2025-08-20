@@ -25,7 +25,11 @@ This project has two main objectives:
 
 ## Project Architecture Overview
 
-![API Plans](docs/project_architecture.png)
+<p align="center">
+  <img src="docs/project-architecture.png" alt="Project Architecture" width="600"/><br>
+  <em>Figure 1: Project Architecture</em>
+</p>
+
 
 ---
 
